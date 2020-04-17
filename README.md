@@ -2,11 +2,17 @@
 
 ### 0. Used software
 [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+
 [Cutadapt (Martin,2011)](https://cutadapt.readthedocs.io/en/stable/)
+
 [Pear (Zhang et al., 2014)](http://www.exelixis-lab.org/web/software/pear)
+
 [SortMeRNA (Kopylova et al., 2012)](https://bioinfo.lifl.fr/RNA/sortmerna/)
+
 [Kraken2 (Wood et al., 2020)](https://ccb.jhu.edu/software/kraken2/)
+
 [Krona (Ondov et al., 2011)](https://github.com/marbl/Krona/wiki)
+
 
 ### Introduction
 This pipeline is used for Illumina RNA-seq metatranscriptomics data. All commands are specific for ILVO's Genomics Server, and might be different on other servers depending on how/where the software and/or databases were installed.
@@ -47,9 +53,13 @@ The resulting preprocessed reads can be checked for their taxonomic composition 
 With options:
 
 `--db` : path to local kraken2 databases
+
 `--memory-mapping` : do not load database in RAM to keep the memory usage as low as possible
+
 `--threads` : number of processors used
+
 `--output` : file name for kraken2 output file
+
 `--report` : file name for kraken2 report file
 
 Example:
@@ -65,8 +75,11 @@ Finally, the Kraken2 results can be visualized using ´Krona´. We use the `Impo
 With options:
 
 `-tax` : path to local taxonomy database for Krona
+
 `-q` : Column of input files to use as query ID
+
 `-t` : Column of input files to use as taxonomy ID
+
 `-o` : file name for Krona output file
 
 
