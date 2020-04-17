@@ -87,6 +87,21 @@ Example:
 
 `ImportTaxonomy.pl -tax /usr/share/bioinf_databases/Krona/taxonomy -q 2 -t 3 -o 022_010_191206_999_0007_004_01_2141.assembled.kraken.html 022_010_191206_999_0007_004_01_2141.assembled.kraken2.output.txt`
 
+### Look up the taxonomy from the Kraken2 output
+
+The `Kraken2` output files are actually a classification of each read with the NCBI taxid it was assigned to. If we want to make comparisons between the taxonomic composition of the different samples, we need to put all samples together in 1 "taxonomy count" table, with taxid as unique identifier of the taxa. This of course has some redundant information. Some sequences are classified up to a higher taxonomic level than others. For example, 1 sequence can be classified up to species level, and another sequence can be classified up to order level only, while both sequences might have originated from the same organism. Therefore it makes sense to make a database with all observed taxids, with their fully linked taxonomy.
+
+First, we create a list of all observed taxids by combining the `Kraken2` output files, extracting the third column of all these files (with the taxid), and removing double taxids. This can be done using simple Linux commands:
+
+`cat sample1.assembled.kraken2.output.txt sample2.assembled.kraken2.output.txt sample3.assembled.kraken2.output.txt | cut -f3 | sort -n | uniq > taxids.txt`
+
+Next, we can use NCBI's `efetch` tools to look up the corresponding taxonomy to each of the taxids by making connection to the NCBI servers. We built a perl wrapper script to do this and to nicely format the output. The perl script takes as first argument a list of taxids (1 per line), and as second argument a name for the output file.
+
+`perl get_taxonomy_from_taxids.pl taxids.txt output.txt`
+
+**Important note:** The script will probably fail multiple times with long lists of taxids. This is due to a lost connection to the NCBI servers. When this happens, the only solution is to check up until which taxid the output was created, and then restart the script using the next taxids as input. In the end you can recombine all created output files using the `cat` command.
+
+
 ### References
 
 Kopylova, E., Noé, L., Touzet, H., 2012. SortMeRNA: fast and accurate filtering of ribosomal RNAs in metatranscriptomic data, Bioinformatics 28, 3211–3321.
