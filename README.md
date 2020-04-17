@@ -1,6 +1,6 @@
 ## Metatranscriptomics_marine_sediment
 
-### 0. Used software
+### Used software
 [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 
 [Cutadapt (Martin,2011)](https://cutadapt.readthedocs.io/en/stable/)
@@ -19,9 +19,9 @@ This pipeline is used for Illumina RNA-seq metatranscriptomics data. All command
 
 ### Preprocessing
 The following steps are done in the preprocessing:
-* Quality check using FastQC
+* Quality check using `FastQC`
 * Removal of adapter sequences. Since fragment lengths are often smaller than 150 bp (the sequencing length), you can read Illumina's universal adapter sequence at the 3' end of the reads (both forward and reverse reads). We therefore trim these universal adapters using `cutadapt`. We also decide to only keep trimmed sequences longer than 30 bp.
-* Merging of forward and reverse reads. Since fragment lengths are often smaller than 300 bp, and since we sequence 2x150 bp, it is possible that the forward and reverse reads overlap. Using the software `PEAR` we can make the overlap of the forward and reverse reads ("assembled" reads).
+* Merging of forward and reverse reads. Since fragment lengths are often smaller than 300 bp, and since we sequence 2x150 bp, it is possible that the forward and reverse reads overlap. Using the software `PEAR` we can make the overlap of the forward and reverse reads ("assembled" reads), with a minimum overlap length of 20 bp.
 * `SortmeRNA` to check which fraction of the reads are rRNA. All merged ("assembled") reads are checked against all rRNA databases provided with the `SortmeRNA` software. Reads are hence classified in two groups: rRNA reads and non rRNA reads.
 * Finally, a table is made which summarizes the number of reads left after each processing step.
 
@@ -44,7 +44,7 @@ It will also make a text file with the number of reads kept after each step for 
 
 ### Taxonomic composition of the reads
 
-The resulting preprocessed reads can be checked for their taxonomic composition using `Kraken2`. `Kraken2` is metagenomics software which classifies each individual read up to a certain taxonomic level, as specific as possible. In our case, we compare with a custom-built Kraken2 database which was made from the complete Genbank nucleotide database (July 2019).
+The resulting preprocessed reads can be checked for their taxonomic composition using `Kraken2`. `Kraken2` is metagenomics software which classifies each individual read up to a certain taxonomic level, as specific as possible. In our case, we compare with a custom-built `Kraken2` database which was made from the complete Genbank nucleotide database (July 2019).
 
 `kraken2 <options> inputfile`
 
@@ -66,7 +66,7 @@ Example:
 
 `kraken2 --db /usr/share/bioinf_databases/kraken2/NCBI_nt --memory-mapping --threads 32 --output 022_010_191206_999_0007_004_01_2141.assembled.kraken2.output.txt --report 022_010_191206_999_0007_004_01_2141.assembled.kraken2.report.txt 022_010_191206_999_0007_004_01_2141.assembled.fastq`
 
-Finally, the Kraken2 results can be visualized using ´Krona´. We use the `ImportTaxonomy` script from `Krona` to produce the plots. This script can directly use the output of Kraken2 as inputfile.
+Finally, the `Kraken2` results can be visualized using `Krona`. We use the `ImportTaxonomy` script from `Krona` to produce the plots. This script can directly use the output of `Kraken2` as inputfile.
 
 `ImportTaxonomy.pl <options> inputfile`
 
