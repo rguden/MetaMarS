@@ -87,7 +87,9 @@ Example:
 
 `ImportTaxonomy.pl -tax /usr/share/bioinf_databases/Krona/taxonomy -q 2 -t 3 -o 022_010_191206_999_0007_004_01_2141.assembled.kraken.html 022_010_191206_999_0007_004_01_2141.assembled.kraken2.output.txt`
 
-### Look up the taxonomy from the Kraken2 output
+### Make a big count table of all observed taxids containing all samples
+
+#### Look up the taxonomy from the Kraken2 output
 
 The `Kraken2` output files are actually a classification of each read with the NCBI taxid it was assigned to. If we want to make comparisons between the taxonomic composition of the different samples, we need to put all samples together in 1 "taxonomy count" table, with taxid as unique identifier of the taxa. This of course has some redundant information. Some sequences are classified up to a higher taxonomic level than others. For example, 1 sequence can be classified up to species level, and another sequence can be classified up to order level only, while both sequences might have originated from the same organism. Therefore it makes sense to make a database with all observed taxids, with their fully linked taxonomy.
 
@@ -100,6 +102,28 @@ Next, we can use NCBI's `efetch` tools to look up the corresponding taxonomy to 
 `perl get_taxonomy_from_taxids.pl taxids.txt output.txt`
 
 **Important note:** The script will probably fail multiple times with long lists of taxids. This is due to a lost connection to the NCBI servers. When this happens, the only solution is to check up until which taxid the output was created, and then restart the script using the next taxids as input. In the end you can recombine all created output files using the `cat` command.
+
+The resulting file contains in each row the taxid with the corresponding taxonomy of every observed taxon in at least one of the samples. This file "taxonomy.txt" will be used in the R script (see section "Merge all count tables").
+
+#### Make a simple count table per sample
+
+Next, we make a simple count table per sample. We use the `kraken2` output file, which lists for each read to which taxid it was assigned. By using the Linux `sort | uniq -c` commands, we can easily count how many observations were done for each taxid. For example:
+
+`cut -f3 191206_07.assembled.kraken2.output.txt | sort | uniq -c > 191206_07_rawcounts.txt`
+
+We make these simple count tables for all samples. In the next section, we will merge all these count tables.
+
+#### Merge all count tables
+
+All individual count tables can be merged to a single count table, where all read counts are listed per sample for each observed taxid. The merging of the individual tables is done using the R script `Process_kraken2_taxcounts.R`. The script reads the following files
+- "taxonomy.txt" : a file containing the full taxonomy of each observed taxid (see section "Lookup the taxonomy")
+- "metadata.txt" : a file with some information on the samples
+- multiple "rawcounts.txt" files, 1 for each sample : raw count files with the counts of each observed taxid (1 file corresponds to 1 sample).
+
+In the script, the following is done:
+- individual count files are merged into 1 big count table (setting unobserved taxa to 0)
+- count table is merged with the taxonomy and metadata to a phyloseq object (see package [phyloseq](https://joey711.github.io/phyloseq/))
+- some basic operations on phyloseq objects: filtering low abundant counts, extracting counts from "Bacteria" only, summing all counts belonging to the same taxon ("tax_glom" function), making barplots.
 
 
 ### References
