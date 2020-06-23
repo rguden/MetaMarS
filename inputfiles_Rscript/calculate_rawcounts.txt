@@ -1,0 +1,5 @@
+cut -f3 191206_08.assembled.kraken2.output.txt |sort |uniq -c > 191206_08_rawcounts.txt
+In notepad++, do Edit ... Blank operations ... Trim leading space and then replace all spaces by tabs.
+
+alternatively, all -in -one command:
+cut -f3 191213_09.assembled.kraken2.output.txt |sort |uniq -c | awk '{$1=$1;print}' | sed 's/ /\t/g'  > 191213_09_rawcounts.txt
