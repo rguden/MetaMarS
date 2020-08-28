@@ -111,6 +111,14 @@ Next, we make a simple count table per sample. We use the `kraken2` output file,
 
 `cut -f3 191206_07.assembled.kraken2.output.txt | sort | uniq -c > 191206_07_rawcounts.txt`
 
+In these count tables, we replace the leading spaces by nothing:
+
+`sed -i 's/^ *//g' 191206_07_rawcounts.txt`
+
+And finally, we replace the remaining space between the values by a tab to have a tab delimited file:
+
+`sed -i -e 's/ /\t/g' 191206_07_rawcounts.txt`
+
 We make these simple count tables for all samples. In the next section, we will merge all these count tables.
 
 #### Merge all count tables

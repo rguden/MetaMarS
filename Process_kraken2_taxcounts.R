@@ -7,7 +7,7 @@ library(phyloseq)
 
 #################
 #CHANGE DATA DIRECTORY
-setwd("/home/genomics/ahaegeman/RNA-seq_sediment/Taxonomy")
+setwd("/home/genomics/ahaegeman/RNA-seq_sediment/Taxonomy_rRNA_maximicrobial")
 
 #################
 #READ DATA
