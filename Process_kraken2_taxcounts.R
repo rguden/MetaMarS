@@ -99,6 +99,22 @@ rownames(taxonomy.for.ps)<-taxonomy$taxid  #set taxid as rownames
 #make phyloseq object
 ps<-phyloseq(otu_table(counts.all.for.ps, taxa_are_rows = TRUE),tax_table(taxonomy.for.ps),sample_data(metadata))
 
+#subset phyloseq object by selecting samples by timepoint
+ps.1312<-subset_samples(ps, date=="191213")
+ps.0612<-subset_samples(ps, date=="191206")
+
+#filter taxa
+ps.1312.filt = filter_taxa(ps.1312, function(x) sum(x) >= 1, TRUE)
+ps.0612.filt = filter_taxa(ps.0612, function(x) sum(x) >= 1, TRUE)
+
+#write to output
+ps.1312.filt.tableforoutput<-cbind("ASV"=rownames(tax_table(ps.1312.filt)),tax_table(ps.1312.filt),otu_table(ps.1312.filt))
+write.table(ps.1312.filt.tableforoutput,file="ASVtable_191213.txt",sep="\t",row.names=F,col.names=T,quote=F)
+
+ps.0612.filt.tableforoutput<-cbind("ASV"=rownames(tax_table(ps.0612.filt)),tax_table(ps.0612.filt),otu_table(ps.0612.filt))
+write.table(ps.0612.filt.tableforoutput,file="ASVtable_191206.txt",sep="\t",row.names=F,col.names=T,quote=F)
+
+
 #################
 #AGGLOMERATE TAXA ON CERTAIN TAXONOMIC LEVEL
 
