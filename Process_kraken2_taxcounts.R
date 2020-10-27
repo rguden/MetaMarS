@@ -186,3 +186,19 @@ pdf(file="Barplot_Bacteria_order.pdf",width=11.7,height=8.3)
 barplot 
 trash<-dev.off()
 
+#MAKE VENN DIAGRAM OF SHARED TAXA
+
+#Install required package
+#install.packages("remotes")
+#remotes::install_github("adrientaudiere/MiscMetabar")
+#install.packages("venneuler")
+library(MiscMetabar)
+library(venneuler)
+
+#plot venn diagram. If print_values=T, the numbers are shown on the graph; if print_values=F, the resulting object is a venndiagram in a ggplot object
+#the minimum number of sequences that need to be present can be specified with min_nb_seq=0; every value below this will be considered 0.
+venn.13.12.samples.values<-venn_phyloseq(ps.1312.filt, "full_name", min_nb_seq = 0, print_values = T) 
+venn.13.12.samples.plot<-venn_phyloseq(ps.1312.filt, "full_name", min_nb_seq = 0, print_values = F) 
+
+venn.13.12.experiment.plot<-venn_phyloseq(ps.1312.filt, "experiment", min_nb_seq = 0, print_values = F)
+
