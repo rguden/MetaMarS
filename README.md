@@ -1,28 +1,14 @@
 ## Metatranscriptomics_marine_sediment
 
-### Used software
-[FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
-
-[Cutadapt (Martin,2011)](https://cutadapt.readthedocs.io/en/stable/)
-
-[Pear (Zhang et al., 2014)](http://www.exelixis-lab.org/web/software/pear)
-
-[SortMeRNA (Kopylova et al., 2012)](https://bioinfo.lifl.fr/RNA/sortmerna/)
-
-[Kraken2 (Wood et al., 2020)](https://ccb.jhu.edu/software/kraken2/)
-
-[Krona (Ondov et al., 2011)](https://github.com/marbl/Krona/wiki)
-
-
-### Introduction
-This pipeline is used for Illumina RNA-seq metatranscriptomics data. All commands are specific for ILVO's Genomics Server, and might be different on other servers depending on how/where the software and/or databases were installed.
+### Introduction and purpose of the study
+The scripts in this repository are accompanying the paper **"Nematodes facilitate bacterial-mediated biogeochemical processes in marine sediments: a meta-transcriptomics approach"** by Rodgee Mae Guden, Annelies Haegeman, Tom Ruttink, Tom Moens and Sofie Derycke (Ghent University / ILVO, Belgium). This study used meta-transcriptomics to investigate taxonomic and functional shifts in marine sediment bacterial communities in response to the addition of a nematode community. Be aware that all scripts and commands were used on servers from ILVO and Ghent University, and might not work on other servers depending on how/where the software and/or databases were installed.
 
 ### Preprocessing
 The following steps are done in the preprocessing:
-* Quality check using `FastQC`
-* Removal of adapter sequences. Since fragment lengths are often smaller than 150 bp (the sequencing length), you can read Illumina's universal adapter sequence at the 3' end of the reads (both forward and reverse reads). We therefore trim these universal adapters using `cutadapt`. We also decide to only keep trimmed sequences longer than 30 bp.
-* Merging of forward and reverse reads. Since fragment lengths are often smaller than 300 bp, and since we sequence 2x150 bp, it is possible that the forward and reverse reads overlap. Using the software `PEAR` we can make the overlap of the forward and reverse reads ("assembled" reads), with a minimum overlap length of 20 bp.
-* `SortmeRNA` to check which fraction of the reads are rRNA. All merged ("assembled") reads are checked against all rRNA databases provided with the `SortmeRNA` software. Reads are hence classified in two groups: rRNA reads and non rRNA reads.
+* Quality check using [`FastQC`](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+* Removal of adapter sequences. Since fragment lengths are often smaller than 150 bp (the sequencing length), you can read Illumina's universal adapter sequence at the 3' end of the reads (both forward and reverse reads). We therefore trim these universal adapters using [`cutadapt`](https://cutadapt.readthedocs.io/en/stable/) (Martin,2011). We also decide to only keep trimmed sequences longer than 30 bp.
+* Merging of forward and reverse reads. Since fragment lengths are often smaller than 300 bp, and since we sequence 2x150 bp, it is possible that the forward and reverse reads overlap. Using the software [`PEAR`](http://www.exelixis-lab.org/web/software/pear) (Zhang et al., 2014) we can make the overlap of the forward and reverse reads ("assembled" reads), with a minimum overlap length of 20 bp.
+* [`SortmeRNA`](https://bioinfo.lifl.fr/RNA/sortmerna/) (Kopylova et al., 2012) to check which fraction of the reads are rRNA. All merged ("assembled") reads are checked against all rRNA databases provided with the `SortmeRNA` software. Reads are hence classified in two groups: rRNA reads and non rRNA reads.
 * Finally, a table is made which summarizes the number of reads left after each processing step.
 
 The preprocessing script should be opened using `Notepad++` or a similar text editor, and the following things should be changed:
@@ -44,7 +30,7 @@ It will also make a text file with the number of reads kept after each step for 
 
 ### Taxonomic composition of the reads
 
-The resulting preprocessed reads can be checked for their taxonomic composition using `Kraken2`. `Kraken2` is metagenomics software which classifies each individual read up to a certain taxonomic level, as specific as possible. In our case, we compare with a custom-built `Kraken2` database which was made from the complete Genbank nucleotide database (July 2019).
+The resulting preprocessed reads can be checked for their taxonomic composition using [`Kraken2`](https://ccb.jhu.edu/software/kraken2/) (Wood et al., 2020). `Kraken2` is metagenomics software which classifies each individual read up to a certain taxonomic level, as specific as possible. In our case, we compare with a custom-built `Kraken2` database which was made from the complete Genbank nucleotide database (July 2019).
 
 `kraken2 <options> inputfile`
 
@@ -66,7 +52,7 @@ Example:
 
 `kraken2 --db /usr/share/bioinf_databases/kraken2/NCBI_nt --memory-mapping --threads 32 --output 022_010_191206_999_0007_004_01_2141.assembled.kraken2.output.txt --report 022_010_191206_999_0007_004_01_2141.assembled.kraken2.report.txt 022_010_191206_999_0007_004_01_2141.assembled.fastq`
 
-Finally, the `Kraken2` results can be visualized using `Krona`. We use the `ImportTaxonomy` script from `Krona` to produce the plots. This script can directly use the output of `Kraken2` as inputfile.
+Finally, the `Kraken2` results can be visualized using [`Krona`](https://github.com/marbl/Krona/wiki) (Ondov et al., 2011). We use the `ImportTaxonomy` script from `Krona` to produce the plots. This script can directly use the output of `Kraken2` as inputfile.
 
 `ImportTaxonomy.pl <options> inputfile`
 
@@ -133,15 +119,55 @@ In the script, the following is done:
 - count table is merged with the taxonomy and metadata to a phyloseq object (see package [phyloseq](https://joey711.github.io/phyloseq/))
 - some basic operations on phyloseq objects: filtering low abundant counts, extracting counts from "Bacteria" only, summing all counts belonging to the same taxon ("tax_glom" function), making barplots.
 
+### COG analysis
+
+The bash script `cog_analysis.sh` can be used to perform functional analyses for RNA-seq data from metatranscriptomics datasets by assigning COG (Cluster of Orthologous Genes) to non-rRNA reads (output of SortMeRNA).
+
+The steps in this script are:
+
+1.   Converting fastq to fasta
+2.   Translating the read sequences to amino acids using [`FragGeneScan`](https://omics.informatics.indiana.edu/FragGeneScan/) (Rho et al., 2010)
+3.   Blasting the query proteins with RPS-BLAST+ against NCBI's [Conserved Domain Database (CDD)](https://www.ncbi.nlm.nih.gov/cdd/)
+4.   Assigning COG (cluster of orthologous groups) categories to proteins.
+5.   Combining the cog outputs of all samples into one count table.
+
+### Pathway analysis
+
+The bash script `pathway_analysis.sh` can be used to perform functional analyses for RNA-seq data from metatranscriptomics datasets by assigning enzymes and metabolic pathways to non-rRNA reads using the [KEGG database](https://www.genome.jp/kegg/pathway.html).
+
+Prior step: de novo assembly of reads using the CLC Genomics Workbench de novo assembler.
+
+The steps in the pathway analysis script are:
+
+1.  Annotating the non-rRNA reads using [`Prokka`](https://github.com/tseemann/prokka) (Seemann, 2014).This program searches for open reading frames (ORFs) on contigs, translates ORFs to protein sequences, and assigns enzyme identifiers to the coding regions.
+2.  Extracting lists of Prokka genes that can be assigned with enzyme identifiers.
+3.  Converting the gff output of Prokka to a gtf file.
+4.  Mapping the original non-rRNA reads onto the assembly using [`Bowtie2`](https://github.com/BenLangmead/bowtie2) (Langmead & Salzberg, 2012), and sorting and indexing the resulting alignment files with [`SAMtools`](https://github.com/samtools/samtools) (Danecek et al., 2021).
+5.  Predicting metabolic pathways using [`Minpath`](https://github.com/mgtools/MinPath) (Ye & Doak, 2009).
+6.  Converting bam files to a count table. This uses the `bam_to_count_table.R` R script.
+7.  Assigning enzyme identifiers to annotated prokka genes using the KEGG database.
+8.  Assigning pathway names to enzyme identifiers using the KEGG database.
+
 
 ### References
 
+
+Danecek, P., Bonfield, J.K., Liddle, J., Marshall, J., Ohan, V., Pollard, M.O., Whitwham, A., Keane, T., McCarthy, S.A., Davies, R.M., Li, H. Twelve years of SAMtools and BCFtools. GigaScience, 10 (2), giab008.
+
 Kopylova, E., Noé, L., Touzet, H., 2012. SortMeRNA: fast and accurate filtering of ribosomal RNAs in metatranscriptomic data, Bioinformatics 28, 3211–3321.
+
+Langmead, B, Salzberg, S. 2012. Fast gapped-read alignment with Bowtie 2. Nature Methods, 9, 357-359.
 
 Martin, M., 2011. Cutadapt removes adapter sequences from high-throughput sequencing reads. EMBnet.journal 17, 10.
 
 Ondov, B.D., Bergman, N.H. & Phillippy, A.M., 2011. Interactive metagenomic visualization in a Web browser. BMC Bioinformatics 12, 385.
 
-Wood, D.E., Lu, J. & Langmead, B., 2019. Improved metagenomic analysis with Kraken 2. Genome Biology 20, 257.
+Rho, M., Tang, H. & Ye, Y. 2010. FragGeneScan: Predicting Genes in Short and Error-prone Reads. Nucleic Acids Research, 38 (20), e191.
+
+Seemann, T. 2014. Prokka: rapid prokaryotic genome annotation. Bioinformatics, 30 (14), 2068-2069.
+
+Wood, D.E., Lu, J. & Langmead, B. 2019. Improved metagenomic analysis with Kraken 2. Genome Biology 20, 257.
+
+Ye, Y., Doak, T.G. A parsimony approach to biological pathway reconstruction/inference for genomes and metagenomes. 2009. PLoS Computational Biology, 5(8), e1000465.
 
 Zhang, J., Kobert, K., Flouri, T., Stamatakis, A., 2014. PEAR: A fast and accurate Illumina Paired-End reAd mergeR. Bioinformatics 30, 614–620.
