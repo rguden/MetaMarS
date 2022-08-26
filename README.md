@@ -148,6 +148,9 @@ The steps in the pathway analysis script are:
 7.  Assigning enzyme identifiers to annotated prokka genes using the KEGG database.
 8.  Assigning pathway names to enzyme identifiers using the KEGG database.
 
+### License
+
+This work is distributed under a [CC BY 4.0 license](https://creativecommons.org/licenses/by/4.0/).
 
 ### References
 
