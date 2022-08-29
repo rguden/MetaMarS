@@ -2,7 +2,7 @@
 #Rodgee Mae Guden
 #rodgeemae.guden@ugent.be
 #This bash script can be used to perform functional analyses for RNA-seq data from metatranscriptomics datasets using the KEGG database to determine metabolic pathways.
-#Prior step: de novo assembly of reads using CLC Workbench de novo assembler;
+#Prior step: de novo assembly of reads using CLC Workbench de novo assembler
 #The steps in this script are:
 #   1.  Annotating the non-rRNA reads using Prokka.This program searches for open reading frames (ORFs) on contigs, translate ORFs to protein sequences, and assign enzyme identifiers to the coding regions.
 #   2.  Extracting lists of Prokka genes that can be assigned with enzyme identifiers. 
@@ -12,9 +12,8 @@
 #   6.  Converting bam files to a count table
 #   7.  Assigning enzyme identifiers to annotated prokka genes using the KEGG database.
 #   8.  Assigning pathway names to enzyme identifiers using the KEGG database.
-
+#   9.  Assigning enzyme names to enzyme identifiers using ExploreEnz - The Enzyme Database (https://www.enzyme-database.org/).
 #inputs: non-rRNA_merged + non-rRNA_forward
-
 
 #Step 1:Annotating the non-rRNA reads using Prokka.
 
@@ -79,5 +78,6 @@ step7_output_file="data/step_7_pathway/output/gene_to_enzyme_id.tsv"
 ./enzyme_id_to_pathway_minpath_kegg.py
 step8_output_file="data/step_8_pathway/output/enzyme_id_to_pathway_minpath_kegg.tsv"
 
-
+#Step 9: Adding enzyme names to enzyme identifiers using ExploreEnz - The enzyme database (https://www.enzyme-database.org/).
+./kegg_enzyme_id_to_names_kegg.py
 
