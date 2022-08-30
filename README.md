@@ -146,7 +146,8 @@ The steps in the pathway analysis script are:
 5.  Predicting metabolic pathways using [`Minpath`](https://github.com/mgtools/MinPath) (Ye & Doak, 2009).
 6.  Converting bam files to a count table. This uses the `bam_to_count_table.R` R script.
 7.  Assigning enzyme identifiers to annotated prokka genes using the KEGG database.
-8.  Assigning pathway names to enzyme identifiers using the KEGG database.
+8.  Assigning pathway names to enzyme identifiers using the KEGG database using the `enzyme_id_to_pathway_minpath_kegg.py`script.
+9.  Assigning enzyme names to enzyme identifiers using [ExploreEnz - The Enzyme Database] (https://www.enzyme-database.org/).
 
 ### License
 
