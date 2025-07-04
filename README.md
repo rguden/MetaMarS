@@ -1,7 +1,7 @@
-## Metatranscriptomics_marine_sediment
+## MetaMars — Metatranscriptomics of Marine Sediment Bacterial Communities
 
 ### Introduction and purpose of the study
-The scripts in this repository are accompanying the paper **"Nematodes facilitate bacterial-mediated biogeochemical processes in marine sediments: a meta-transcriptomics approach"** by Rodgee Mae Guden, Annelies Haegeman, Tom Ruttink, Tom Moens and Sofie Derycke (Ghent University / ILVO, Belgium). This study used meta-transcriptomics to investigate taxonomic and functional shifts in marine sediment bacterial communities in response to the addition of a nematode community. Be aware that all scripts and commands were used on servers from ILVO and Ghent University, and might not work on other servers depending on how/where the software and/or databases were installed.
+The scripts in this repository are accompanying the paper **"Nematodes alter the taxonomic and functional profiles of benthic bacterial communities: A metatranscriptomic approach"** by Rodgee Mae Guden, Annelies Haegeman, Tom Ruttink, Tom Moens and Sofie Derycke (Ghent University / ILVO, Belgium). This study used meta-transcriptomics to investigate taxonomic and functional shifts in marine sediment bacterial communities in response to the addition of a nematode community. Be aware that all scripts and commands were used on servers from ILVO and Ghent University, and might not work on other servers depending on how/where the software and/or databases were installed.
 
 ### Preprocessing
 The following steps are done in the preprocessing:
