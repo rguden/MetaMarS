@@ -4,11 +4,12 @@
 #This bash script can be used to perform functional analyses for RNA-seq data from metatranscriptomics datasets using COG (Cluster of Orthologous Genes).
 #Prior steps: fastqc - cutadapt - PEAR - sortmerna 
 #The steps in this script are:
-#   1.   Converting fastq to fasta
-#   2.   Translating the read sequences to amino acids using FragGeneScan
-#   3.   Blasting the query proteins with RPS-BLAST+ against NCBI's Conserved Domain Database (CDD)
-#   4.   Assigning COG (cluster of orthologous groups) categories to proteins
-#   5.   Combining the cog outputs of all samples into one count table. The cog outputs can be found in the folder "cog_outputs".
+#   1.   Converting fastq to fasta.
+#   2.   Translating the read sequences to amino acids using FragGeneScan.
+#   3.   Blasting the query proteins with RPS-BLAST+ against NCBI's Conserved Domain Database (CDD).
+#   4.   Assigning COG (cluster of orthologous groups) categories to proteins.
+#   5.   Combining the cog outputs of all samples into one count table. 
+
 #inputs: non-rRNA_merged + non-rRNA_forward
 
 #set the working directory
