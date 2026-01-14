@@ -3,7 +3,7 @@
 #Author: Rodgee Mae Guden
 #Previous analyses: de novo assembly - prokka - gff_to_gtf - bowtie - samtools
 #This script uses the gtf annotation file and BAM files created in the previous steps.
-#The creates a count table of the number of reads for each annotated Prokka genef for all samples.
+#This creates a count table of the number of reads for each annotated Prokka genes for all samples.
 
 if (!requireNamespace("BiocManager", quietly = TRUE))
   install.packages("BiocManager")
